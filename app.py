@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import pandas as pd  # Import pandas
 import pickle
 import os
 from PIL import Image, ImageOps
@@ -63,9 +64,14 @@ def main():
             text-align: center;
         }}
         .prediction {{
-            color: #00FF00; /* Green color for the prediction text */
             font-weight: bold;
             text-align: center;
+        }}
+        .prediction-healthy {{
+            color: #32CD32; /* LimeGreen color for healthy prediction text */
+        }}
+        .prediction-bleached {{
+            color: #FF4500; /* OrangeRed color for bleached prediction text */
         }}
         </style>
         """,
@@ -108,14 +114,15 @@ def main():
             prediction = predict(image, svm_model, scaler, pca)
 
         categories = ['Healthy Corals', 'Bleached Corals']
-        result_text = f"<div class='prediction'>Prediction: **{categories[prediction[0]]}**</div>"
-        st.markdown(result_text, unsafe_allow_html=True)
-
         if prediction[0] == 0:
+            result_text = f"<div class='prediction prediction-healthy'>Prediction: **{categories[prediction[0]]}**</div>"
+            st.markdown(result_text, unsafe_allow_html=True)
             st.markdown("<div style='text-align: center;'><img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp' width='300'></div>", unsafe_allow_html=True)
             st.markdown("<h2 style='text-align: center;'>🎉 Healthy Corals! 🎉</h2>", unsafe_allow_html=True)
             st.pydeck_chart(create_confetti())
         else:
+            result_text = f"<div class='prediction prediction-bleached'>Prediction: **{categories[prediction[0]]}**</div>"
+            st.markdown(result_text, unsafe_allow_html=True)
             st.markdown("<div style='text-align: center;'><img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp' width='300'></div>", unsafe_allow_html=True)
             st.markdown("<h2 style='text-align: center;'>❄️ Bleached Corals ❄️</h2>", unsafe_allow_html=True)
             st.snow()  # Add snow animation for bleached corals
