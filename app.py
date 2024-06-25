@@ -68,10 +68,10 @@ def main():
             text-align: center;
         }}
         .prediction-healthy {{
-            color: #32CD32; /* LimeGreen color for healthy prediction text */
+            color: #00BFFF; /* DeepSkyBlue color for healthy prediction text */
         }}
         .prediction-bleached {{
-            color: #FF4500; /* OrangeRed color for bleached prediction text */
+            color: #8B0000; /* DarkRed color for bleached prediction text */
         }}
         </style>
         """,
@@ -139,7 +139,7 @@ def create_confetti():
         'lat': np.random.uniform(-90, 90, 500),
         'lon': np.random.uniform(-180, 180, 500),
         'size': np.random.uniform(10, 100, 500),
-        'color': np.random.randint(0, 255, (500, 3))
+        'color': [[46, 139, 87] for _ in range(500)]  # DarkGreen color for confetti
     })
 
     layer = pdk.Layer(
