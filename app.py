@@ -114,7 +114,7 @@ def main():
         if prediction[0] == 0:
             st.markdown("<div style='text-align: center;'><img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp' width='300'></div>", unsafe_allow_html=True)
             st.markdown("<h2 style='text-align: center;'>🎉 Healthy Corals! 🎉</h2>", unsafe_allow_html=True)
-            st.bokeh_chart(create_confetti())
+            st.pydeck_chart(create_confetti())
         else:
             st.markdown("<div style='text-align: center;'><img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp' width='300'></div>", unsafe_allow_html=True)
             st.markdown("<h2 style='text-align: center;'>❄️ Bleached Corals ❄️</h2>", unsafe_allow_html=True)
@@ -125,36 +125,34 @@ def main():
         st.image('https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp', width=400)
 
 def create_confetti():
-    from bokeh.plotting import figure, output_file, show
-    from bokeh.models import ColumnDataSource
-    from bokeh.io import output_notebook
-    import pandas as pd
+    import pydeck as pdk
 
-    output_notebook()
+    # Data to create confetti effect
+    data = pd.DataFrame({
+        'lat': np.random.uniform(-90, 90, 500),
+        'lon': np.random.uniform(-180, 180, 500),
+        'size': np.random.uniform(10, 100, 500),
+        'color': np.random.randint(0, 255, (500, 3))
+    })
 
-    n = 500
-    x = np.random.random(size=n) * 100
-    y = np.random.random(size=n) * 100
-    radii = np.random.random(size=n) * 1.5
-    colors = [
-        "#%02x%02x%02x" % (int(r), int(g), 150) for r, g in zip(50 + 2*x, 30 + 2*y)
-    ]
+    layer = pdk.Layer(
+        'ScatterplotLayer',
+        data,
+        get_position='[lon, lat]',
+        get_radius='size',
+        get_fill_color='color',
+        pickable=True,
+        opacity=0.6
+    )
 
-    p = figure(title="Confetti!", tools="hover", toolbar_location=None,
-               plot_height=400, plot_width=400, x_range=[0, 100], y_range=[0, 100],
-               tooltips="@desc", background_fill_color=None, border_fill_color=None)
+    view_state = pdk.ViewState(
+        latitude=0,
+        longitude=0,
+        zoom=0.5,
+        pitch=0
+    )
 
-    source = ColumnDataSource(data=dict(
-        x=x,
-        y=y,
-        radius=radii,
-        colors=colors,
-        desc=["Confetti" for _ in range(n)],
-    ))
-
-    p.circle('x', 'y', radius='radius', fill_color='colors', fill_alpha=0.6, line_color=None, source=source)
-
-    return p
+    return pdk.Deck(layers=[layer], initial_view_state=view_state)
 
 if __name__ == '__main__':
     main()
