@@ -41,7 +41,7 @@ def main():
         f"""
         <style>
         .stApp {{
-            background-image: url('https://github.com/SriKumar1313/coral_classy_app/blob/main/assets/background.jpg?raw=true');
+            background-image: url('https://github.com/SriKumar1313/coral_classy_app/blob/main/assets/background.png?raw=true');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -58,12 +58,21 @@ def main():
             color: #FFFFFF;
             box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
         }}
+        h1 {{
+            color: #FFD700; /* Gold color for the title */
+            text-align: center;
+        }}
+        .prediction {{
+            color: #00FF00; /* Green color for the prediction text */
+            font-weight: bold;
+            text-align: center;
+        }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    st.title("🌊 Coral Reef Image Classifier 🐠")
+    st.markdown("<h1>🌊 Coral Reef Image Classifier 🐠</h1>", unsafe_allow_html=True)
     st.write("""
         Welcome to the **Coral Reef Image Classifier**!
         
@@ -99,19 +108,53 @@ def main():
             prediction = predict(image, svm_model, scaler, pca)
 
         categories = ['Healthy Corals', 'Bleached Corals']
-        result_text = f"Prediction: **{categories[prediction[0]]}**"
-        st.success(result_text)
+        result_text = f"<div class='prediction'>Prediction: **{categories[prediction[0]]}**</div>"
+        st.markdown(result_text, unsafe_allow_html=True)
 
         if prediction[0] == 0:
-            st.balloons()  # Add balloons animation for healthy corals
-            st.markdown("<div style='text-align: center;'><img src='https://media.giphy.com/media/l4FGEyRzaeg5p0DXm/giphy.gif' width='300'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center;'><img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp' width='300'></div>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center;'>🎉 Healthy Corals! 🎉</h2>", unsafe_allow_html=True)
+            st.bokeh_chart(create_confetti())
         else:
+            st.markdown("<div style='text-align: center;'><img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp' width='300'></div>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center;'>❄️ Bleached Corals ❄️</h2>", unsafe_allow_html=True)
             st.snow()  # Add snow animation for bleached corals
-            st.markdown("<div style='text-align: center;'><img src='https://media.giphy.com/media/l4FGF94cInGdfk9MI/giphy.gif' width='300'></div>", unsafe_allow_html=True)
 
     else:
         st.sidebar.info("Please upload an image to start the classification.")
-        st.image('https://media.giphy.com/media/l4FGGafcOHmrlQxGk/giphy.gif', width=400)
+        st.image('https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdndxZDV2NWxwemYxeDVtbXZ3c2Y2d3ZocnExYmtycXlhZmJ6YnowaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oywDPeCxPK0HeKz7pz/giphy.webp', width=400)
+
+def create_confetti():
+    from bokeh.plotting import figure, output_file, show
+    from bokeh.models import ColumnDataSource
+    from bokeh.io import output_notebook
+    import pandas as pd
+
+    output_notebook()
+
+    n = 500
+    x = np.random.random(size=n) * 100
+    y = np.random.random(size=n) * 100
+    radii = np.random.random(size=n) * 1.5
+    colors = [
+        "#%02x%02x%02x" % (int(r), int(g), 150) for r, g in zip(50 + 2*x, 30 + 2*y)
+    ]
+
+    p = figure(title="Confetti!", tools="hover", toolbar_location=None,
+               plot_height=400, plot_width=400, x_range=[0, 100], y_range=[0, 100],
+               tooltips="@desc", background_fill_color=None, border_fill_color=None)
+
+    source = ColumnDataSource(data=dict(
+        x=x,
+        y=y,
+        radius=radii,
+        colors=colors,
+        desc=["Confetti" for _ in range(n)],
+    ))
+
+    p.circle('x', 'y', radius='radius', fill_color='colors', fill_alpha=0.6, line_color=None, source=source)
+
+    return p
 
 if __name__ == '__main__':
     main()
