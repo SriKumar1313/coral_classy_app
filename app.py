@@ -52,10 +52,11 @@ def main():
             background-color: rgba(255, 255, 255, 0.9);
         }}
         .block-container {{
-            padding: 1rem 2rem;
+            padding: 2rem;
             border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             color: #FFFFFF;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
         }}
         </style>
         """,
@@ -63,9 +64,20 @@ def main():
     )
 
     st.title("🌊 Coral Reef Image Classifier 🐠")
-    st.write("Welcome to the Coral Reef Image Classifier! Upload an image to see if it contains healthy or bleached corals.")
-    st.sidebar.title("Upload Your Image Here")
-    
+    st.write("""
+        Welcome to the **Coral Reef Image Classifier**!
+        
+        This app helps in identifying whether the coral reefs in the uploaded image are **healthy** or **bleached**.
+        
+        🐟 **Steps to use the app**:
+        1. Upload an image of a coral reef using the sidebar.
+        2. Wait for the app to process and classify the image.
+        3. See the results and enjoy the interactive feedback!
+    """)
+
+    st.sidebar.title("📤 Upload Your Image Here")
+    st.sidebar.write("Please upload an image of coral reefs to start the classification.")
+
     # Upload image
     uploaded_file = st.sidebar.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
@@ -85,18 +97,21 @@ def main():
         # Add progress bar and status text
         with st.spinner("Processing..."):
             prediction = predict(image, svm_model, scaler, pca)
-        
+
         categories = ['Healthy Corals', 'Bleached Corals']
         result_text = f"Prediction: **{categories[prediction[0]]}**"
         st.success(result_text)
-        
+
         if prediction[0] == 0:
             st.balloons()  # Add balloons animation for healthy corals
+            st.markdown("<div style='text-align: center;'><img src='https://media.giphy.com/media/l4FGEyRzaeg5p0DXm/giphy.gif' width='300'></div>", unsafe_allow_html=True)
         else:
             st.snow()  # Add snow animation for bleached corals
+            st.markdown("<div style='text-align: center;'><img src='https://media.giphy.com/media/l4FGF94cInGdfk9MI/giphy.gif' width='300'></div>", unsafe_allow_html=True)
 
     else:
         st.sidebar.info("Please upload an image to start the classification.")
+        st.image('https://media.giphy.com/media/l4FGGafcOHmrlQxGk/giphy.gif', width=400)
 
 if __name__ == '__main__':
     main()
