@@ -41,7 +41,7 @@ def main():
         f"""
         <style>
         .stApp {{
-            background-image: url('https://github.com/SriKumar1313/coral_classy_app/blob/main/assets/background.png?raw=true');
+            background-image: url('https://github.com/SriKumar1313/coral_classy_app/blob/main/assets/background.jpg?raw=true');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
